@@ -19,6 +19,7 @@ ARG java_image_tag=11-jre-slim
 FROM openjdk:${java_image_tag}
 
 ARG spark_uid=185
+ARG spark_gid=185
 
 # Before building the docker image, first build and make a Spark distribution following
 # the instructions in https://spark.apache.org/docs/latest/building-spark.html.
