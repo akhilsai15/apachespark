@@ -21,7 +21,8 @@ FROM openjdk:${java_image_tag}
 ARG spark_uid=1000
 ARG spark_gid=1000
 #RUN groupadd -r spark && useradd -r -u ${spark_uid} -g ${spark_gid} -G spark spark
-RUN groupadd -g ${spark_gid} spark && useradd -u ${spark_uid} -g ${spark_gid} -m -s /bin/bash spark
+#RUN groupadd -g ${spark_gid} spark && useradd -u ${spark_uid} -g ${spark_gid} -m -s /bin/bash spark
+RUN groupadd -g ${spark_gid} spark && useradd -u ${spark_uid} -g ${spark_gid} -m -s /bin/sh spark
 
 
 
