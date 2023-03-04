@@ -20,6 +20,9 @@ FROM openjdk:${java_image_tag}
 
 ARG spark_uid=185
 ARG spark_gid=185
+RUN groupadd -r wheel && useradd -r -u ${spark_uid} -g ${spark_gid} -G spark spark
+
+
 
 # Before building the docker image, first build and make a Spark distribution following
 # the instructions in https://spark.apache.org/docs/latest/building-spark.html.
@@ -40,9 +43,12 @@ RUN set -ex && \
     rm /bin/sh && \
     ln -sv /bin/bash /bin/sh && \
     echo "auth required pam_wheel.so use_uid" >> /etc/pam.d/su && \
-    chgrp root /etc/passwd && chmod ug+rw /etc/passwd && \
+    chgrp spark /etc/passwd && chmod ug+rw /etc/passwd && \
     rm -rf /var/cache/apt/*
 
+RUN chown myuser:mygroup /opt && \
+    chown ${spark_uid}:${spark_gid} /opt
+    
 COPY jars /opt/spark/jars
 COPY bin /opt/spark/bin
 COPY sbin /opt/spark/sbin
