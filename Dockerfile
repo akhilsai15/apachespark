@@ -18,9 +18,10 @@ ARG java_image_tag=11-jre-slim
 
 FROM openjdk:${java_image_tag}
 
-ARG spark_uid=185
-ARG spark_gid=185
-RUN groupadd -r wheel && useradd -r -u ${spark_uid} -g ${spark_gid} -G spark spark
+ARG spark_uid=1000
+ARG spark_gid=1000
+#RUN groupadd -r spark && useradd -r -u ${spark_uid} -g ${spark_gid} -G spark spark
+RUN groupadd -g ${spark_gid} spark && useradd -u ${spark_uid} -g ${spark_gid} -m -s /bin/bash spark
 
 
 
@@ -46,9 +47,9 @@ RUN set -ex && \
     chgrp spark /etc/passwd && chmod ug+rw /etc/passwd && \
     rm -rf /var/cache/apt/*
 
-RUN chown myuser:mygroup /opt && \
+RUN chown spark:spark /opt && \
     chown ${spark_uid}:${spark_gid} /opt
-    
+
 COPY jars /opt/spark/jars
 COPY bin /opt/spark/bin
 COPY sbin /opt/spark/sbin
@@ -69,4 +70,4 @@ RUN chmod 777 -R /tmp
 ENTRYPOINT [ "/opt/entrypoint.sh" ]
 
 # Specify the User that the actual main process will run as
-USER ${spark_uid}
+USER spark
