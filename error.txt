@@ -1,0 +1,77 @@
+RUN groupadd -g ${GID} sparkuser && useradd -u ${UID} -g ${GID} -m -s /bin/bash sparkuser
+RUN groupadd -g ${spark_gid} spark && useradd -u ${spark_uid} -g ${spark_gid} -m -s /bin/bash spark
+
+Container log meaning...
++ id -u
++ myuid=1000
+++ id -g
++ mygid=1000
++ set +e
+++ getent passwd 1000
++ uidentry=spark:x:1000:1000::/home/spark:/bin/bash
++ set -e
++ '[' -z spark:x:1000:1000::/home/spark:/bin/bash ']'
++ '[' -z /usr/local/openjdk-11 ']'
++ SPARK_CLASSPATH=':/opt/spark/jars/*'
++ sed 's/[^=]*=\(.*\)/\1/g'
++ sort -t_ -k4 -n
++ grep SPARK_JAVA_OPT_
++ env
++ readarray -t SPARK_EXECUTOR_JAVA_OPTS
++ '[' -n '' ']'
++ '[' -z ']'
++ '[' -z ']'
++ '[' -n '' ']'
++ '[' -z ']'
++ '[' -z ']'
++ '[' -z x ']'
++ SPARK_CLASSPATH='/opt/spark/conf::/opt/spark/jars/*'
++ case "$1" in
++ echo 'Non-spark-on-k8s command provided, proceeding in pass-through mode...'
+Non-spark-on-k8s command provided, proceeding in pass-through mode...
++ CMD=("$@")
++ exec /usr/bin/tini -s --
+tini (tini version 0.19.0)
+Usage: tini [OPTIONS] PROGRAM -- [ARGS] | --version
+
+Execute a program under the supervision of a valid init process (tini)
+
+Command line options:
+
+  --version: Show version and exit.
+  -h: Show this help message and exit.
+  -s: Register as a process subreaper (requires Linux >= 3.4).
+  -p SIGNAL: Trigger SIGNAL when parent dies, e.g. "-p SIGKILL".
+  -v: Generate more verbose output. Repeat up to 3 times.
+  -w: Print a warning when processes are getting reaped.
+  -g: Send signals to the child's process group.
+  -e EXIT_CODE: Remap EXIT_CODE (from 0 to 255) to 0.
+  -l: Show license and exit.
+
+Environment variables:
+
+  TINI_SUBREAPER: Register as a process subreaper (requires Linux >= 3.4).
+  TINI_VERBOSITY: Set the verbosity level (default: 1).
+  TINI_KILL_PROCESS_GROUP: Send signals to the child's process group.
+what does it mean
+The output you provided is a log of a shell script that is running inside a Docker container. Here's a breakdown of what each line means:
+
+id -u: This command retrieves the user ID of the current user running the shell script.
+myuid=1000: This sets the variable myuid to the value 1000, which is the user ID of the user running the shell script.
+id -g: This command retrieves the group ID of the current user running the shell script.
+mygid=1000: This sets the variable mygid to the value 1000, which is the group ID of the user running the shell script.
+set +e: This command disables the exit-on-error option in the shell script, meaning that if a command fails, the script will continue to run.
+getent passwd 1000: This command retrieves the user entry for the user with ID 1000, which is the user running the shell script.
+uidentry=spark:x:1000:1000::/home/spark:/bin/bash: This sets the variable uidentry to the user entry retrieved in the previous command. It contains the username (spark), user ID (1000), group ID (1000), home directory (/home/spark), and default shell (/bin/bash) for the user running the shell script.
+set -e: This command re-enables the exit-on-error option in the shell script, meaning that if a command fails, the script will exit.
+SPARK_CLASSPATH=':/opt/spark/jars/*': This sets the SPARK_CLASSPATH environment variable to include the JAR files in the /opt/spark/jars directory.
+sed 's/[^=]*=\(.*\)/\1/g': This command extracts the values of environment variables that start with SPARK_JAVA_OPT_ and puts them in an array called SPARK_EXECUTOR_JAVA_OPTS.
+sort -t_ -k4 -n: This command sorts the SPARK_EXECUTOR_JAVA_OPTS array numerically based on the fourth field (which should be a number).
+grep SPARK_JAVA_OPT_: This command retrieves all environment variables that start with SPARK_JAVA_OPT_.
+env: This command prints out all environment variables that are currently set.
+readarray -t SPARK_EXECUTOR_JAVA_OPTS: This command puts the environment variables retrieved in the previous command into an array called SPARK_EXECUTOR_JAVA_OPTS.
+CMD=("$@"): This sets the CMD variable to be the arguments passed to the script.
+exec /usr/bin/tini -s --: This command uses the exec command to replace the current shell process with the tini process. tini is used as a process supervisor in this Docker container.
+Non-spark-on-k8s command provided, proceeding in pass-through mode...: This is a log message that indicates that the command being run is not a Spark-on-Kubernetes command and that the script is running in pass-through mode.
+tini (tini version 0.19.0): This is a log message that shows the version of the tini process supervisor.
+Usage: tini [OPTIONS] PROGRAM -- [ARGS] | --version: This is a log message that shows the usage information for the tini process supervisor. It shows the options that can be passed to tini.
