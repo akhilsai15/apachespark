@@ -63,6 +63,8 @@ ENV SPARK_HOME /opt/spark
 WORKDIR /opt/spark/work-dir
 RUN chmod g+w /opt/spark/work-dir
 RUN chmod a+x /opt/decom.sh
+RUN chmod 777 -R /opt
+RUN chmod 777 -R /tmp
 
 ENTRYPOINT [ "/opt/entrypoint.sh" ]
 
